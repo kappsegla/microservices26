@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Service3Controller {
 
     @GetMapping("/api/test")
-    public String getTest(@RequestHeader("X-User-Name") String username) {
+    public String getTest(@RequestHeader(value = "X-User-Name", defaultValue = "anonymous") String username) {
         return "Hej " + username;
     }
 }
