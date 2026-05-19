@@ -1,0 +1,16 @@
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\event\OrderPlacedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\event\StockReservationFailedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\event\StockReservedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\config\DataInitializer.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\config\RabbitConfig.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\controller\ChaosContext.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\controller\ChaosController.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\controller\ChaosScenario.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\controller\StockController.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\model\ProcessedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\model\Stock.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\repository\ProcessedEventRepository.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\repository\StockRepository.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\service\StockListener.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\service\StockService.java
+C:\Users\marti\IdeaProjects\microservices26\stockservice\src\main\java\org\example\stockservice\StockServiceApplication.java

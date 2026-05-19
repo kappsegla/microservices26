@@ -1,0 +1,17 @@
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\event\OrderPlacedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\event\StockReservationFailedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\event\StockReservedEvent.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\config\JacksonConfig.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\config\RabbitConfig.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\controller\ChaosContext.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\controller\ChaosController.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\controller\ChaosScenario.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\controller\OrderController.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\model\Order.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\model\OutboxEvent.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\OrderServiceApplication.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\repository\OrderRepository.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\repository\OutboxRepository.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\service\OrderSagaListener.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\service\OrderService.java
+C:\Users\marti\IdeaProjects\microservices26\orderservice\src\main\java\org\example\orderservice\service\OutboxRelay.java

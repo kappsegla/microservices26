@@ -1,0 +1,16 @@
+org\example\event\OrderPlacedEvent.class
+org\example\stockservice\repository\StockRepository.class
+org\example\event\StockReservationFailedEvent.class
+org\example\stockservice\config\DataInitializer.class
+org\example\stockservice\repository\ProcessedEventRepository.class
+org\example\stockservice\StockServiceApplication.class
+org\example\stockservice\controller\ChaosContext.class
+org\example\stockservice\controller\StockController.class
+org\example\stockservice\service\StockService.class
+org\example\event\StockReservedEvent.class
+org\example\stockservice\controller\ChaosController.class
+org\example\stockservice\controller\ChaosScenario.class
+org\example\stockservice\model\ProcessedEvent.class
+org\example\stockservice\model\Stock.class
+org\example\stockservice\config\RabbitConfig.class
+org\example\stockservice\service\StockListener.class

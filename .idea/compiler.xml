@@ -6,11 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="stockservice" />
+        <module name="bff" />
+        <module name="authservice" />
         <module name="service2" />
         <module name="service1" />
-        <module name="bff" />
         <module name="service3" />
-        <module name="authservice" />
+        <module name="orderservice" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -22,9 +24,11 @@
       <module name="authservice" options="-parameters" />
       <module name="bff" options="-parameters" />
       <module name="demo" options="-parameters" />
+      <module name="orderservice" options="-parameters" />
       <module name="service1" options="-parameters" />
       <module name="service2" options="-parameters" />
       <module name="service3" options="-parameters" />
+      <module name="stockservice" options="-parameters" />
     </option>
   </component>
 </project>
