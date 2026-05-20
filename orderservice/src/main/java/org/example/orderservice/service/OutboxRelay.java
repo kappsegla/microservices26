@@ -81,6 +81,11 @@ public class OutboxRelay {
                     RabbitConfig.EXCHANGE_NAME,
                     "order.placed",
                     messagePayload,
+                    message -> {
+                        message.getMessageProperties().setHeader("X-Sender-App", "OrderService");
+                        message.getMessageProperties().setHeader("X-Auth-Token", "d2lkZ2V0X3NlY3JldF90b2tlbg==");
+                        return message;
+                    },
                     correlationData
                 );
 
@@ -90,6 +95,11 @@ public class OutboxRelay {
                         RabbitConfig.EXCHANGE_NAME,
                         "order.placed",
                         messagePayload,
+                        message -> {
+                            message.getMessageProperties().setHeader("X-Sender-App", "OrderService");
+                            message.getMessageProperties().setHeader("X-Auth-Token", "d2lkZ2V0X3NlY3JldF90b2tlbg==");
+                            return message;
+                        },
                         correlationData
                     );
                 }

@@ -252,6 +252,123 @@ Invoke-RestMethod -Uri "http://localhost:8081/orders/$($response.id)"
 
 ---
 
+### 7. Scenario: Poison Message & Dead Letter Queue (DLQ)
+Simulates a message that repeatedly fails processing due to invalid business content (a "poison message") and eventually gets routed to the Dead Letter Queue (DLQ).
+
+In this scenario, we send an order with a negative quantity (`-5`). The `StockService` detects this as invalid and throws an `IllegalArgumentException` in its business logic, which triggers Spring AMQP to retry processing. Because the retry limit is configured to `3` in `application.properties`, the listener attempts to process the message 3 times before exhausting retries, rejecting the message, and letting RabbitMQ dead-letter it to the DLQ (`stock.orders.dlq`).
+
+#### Bash
+```bash
+# Reset scenarios to NORMAL
+curl -X POST http://localhost:8081/chaos/scenario -H "Content-Type: application/json" -d '"NORMAL"'
+curl -X POST http://localhost:8082/chaos/scenario -H "Content-Type: application/json" -d '"NORMAL"'
+
+# Place an order with negative quantity
+curl -X POST http://localhost:8081/orders -H "Content-Type: application/json" -d '{"product": "Widget", "quantity": -5, "price": 10.0}'
+
+# Wait for retries to exhaust (approx 10s)
+sleep 10
+
+# Check stockservice logs to see the retries and the failure
+docker logs microservices26-stockservice-1 | grep "Negative quantity detected"
+```
+
+#### PowerShell
+```powershell
+# Reset scenarios to NORMAL
+Invoke-RestMethod -Method Post -Uri "http://localhost:8081/chaos/scenario" -ContentType "application/json" -Body '"NORMAL"'
+Invoke-RestMethod -Method Post -Uri "http://localhost:8082/chaos/scenario" -ContentType "application/json" -Body '"NORMAL"'
+
+# Place an order with negative quantity
+$order = @{ product = "Widget"; quantity = -5; price = 10.0 } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://localhost:8081/orders" -ContentType "application/json" -Body $order
+
+# Wait for retries to exhaust (approx 10s)
+Start-Sleep -Seconds 10
+
+# Check stockservice logs to see the retries and the failure
+docker logs microservices26-stockservice-1 | Select-String "Negative quantity detected"
+```
+
+#### Checking the DLQ in RabbitMQ Web Manager
+To verify that the poison message has successfully been moved to the Dead Letter Queue:
+
+1. Open your web browser and navigate to the **RabbitMQ Management Console**: [http://localhost:15672](http://localhost:15672)
+2. Log in using the default credentials:
+   - **Username**: `guest`
+   - **Password**: `guest`
+3. Click on the **Queues** (or **Queues and Streams**) tab.
+4. You will see a list of configured queues. Locate the Dead Letter Queue: `stock.orders.dlq`.
+5. Under the **Overview** columns, notice that `stock.orders.dlq` has `1` message in the **Ready** state, and the message rate graphs show activity.
+6. Click on the `stock.orders.dlq` queue name to open its detail page.
+7. Scroll down to the **Get messages** section:
+   - Set **Requeue** to `Yes` (this keeps the message in the DLQ for future analysis/troubleshooting).
+   - Set **Encoding** to `Auto string/utf-8`.
+   - Click the **Get Message(s)** button.
+8. Expand the fetched message to inspect its **Payload** and **Headers**:
+   - **Payload**: Contains the raw JSON payload with `"quantity": -5`.
+   - **Headers**: Contains metadata about the failures, such as `x-death` (an array documenting where, when, and why the message was dead-lettered, e.g. with reason `rejected`).
+
+---
+
+### 8. Scenario: Message Metadata Headers & Authentication
+Illustrates how to enrich published events with metadata headers (such as `X-Sender-App` and `X-Auth-Token`) and inspect/validate them on the receiving service (`StockService`) to identify and authenticate the message source.
+
+#### Implementation Details
+- **Publisher (`OrderService`):** In `OutboxRelay.java`, the `RabbitTemplate` uses a custom `MessagePostProcessor` to dynamically attach application identity and authorization tokens to the outgoing message properties:
+  ```java
+  rabbitTemplate.convertAndSend(
+      RabbitConfig.EXCHANGE_NAME,
+      "order.placed",
+      messagePayload,
+      message -> {
+          message.getMessageProperties().setHeader("X-Sender-App", "OrderService");
+          message.getMessageProperties().setHeader("X-Auth-Token", "d2lkZ2V0X3NlY3JldF90b2tlbg==");
+          return message;
+      },
+      correlationData
+  );
+  ```
+
+- **Consumer (`StockService`):** In `StockListener.java`, the message headers are extracted dynamically using the Spring `@Header` annotation:
+  ```java
+  @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
+  public void handleOrderPlaced(
+          OrderPlacedEvent event,
+          @Header(required = false, name = "x-delivery-attempt") Integer deliveryAttempt,
+          @Header(required = false, name = "X-Sender-App") String senderApp,
+          @Header(required = false, name = "X-Auth-Token") String authToken) {
+      
+      // Sender verification / authentication simulation
+      if (authToken != null && !authToken.equals("d2lkZ2V0X3NlY3JldF90b2tlbg==")) {
+          logger.warn("Authentication failed! Invalid token received from {}: {}", senderApp, authToken);
+          throw new SecurityException("Invalid authentication token");
+      } else if (senderApp != null) {
+          logger.info("Authentication successful! Message received from trusted source: {} (Auth Token: {})", senderApp, authToken);
+      }
+      ...
+  }
+  ```
+
+#### How to Verify
+1. Place a normal order via `OrderService`.
+2. Inspect the logs of the `stockservice`:
+   - **Bash:**
+     ```bash
+     docker logs microservices26-stockservice-1 | grep "Authentication successful"
+     ```
+   - **PowerShell:**
+     ```powershell
+     docker logs microservices26-stockservice-1 | Select-String "Authentication successful"
+     ```
+   *Expected Log Output:*
+   ```text
+   INFO [...] o.e.s.service.StockListener : Authentication successful! Message received from trusted source: OrderService (Auth Token: d2lkZ2V0X3NlY3JldF90b2tlbg==)
+   ```
+
+---
+
 ## Observability
 Logs include Trace IDs and scenario information:
 `INFO [orderservice,5f2e...,a1b2...] ...`
+
