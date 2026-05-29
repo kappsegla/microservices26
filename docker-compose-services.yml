@@ -1,0 +1,47 @@
+#docker-compose -f docker-compose-services.yml up -d
+services:
+  authservice:
+    image: authservice:0.0.1-SNAPSHOT
+    container_name: authservice
+    environment:
+      - AUTH_ISSUER_URI=http://auth.localtest.me:9000
+      - AUTH_REDIRECT_URI=http://bff.localtest.me:8080/login/oauth2/code/authservice
+    ports:
+      - "9000:9000"
+
+  bff:
+    image: bff:0.0.1-SNAPSHOT
+    container_name: bff
+    environment:
+      - AUTH_ISSUER_URI=http://auth.localtest.me:9000
+      - AUTH_REDIRECT_URI=http://bff.localtest.me:8080/login/oauth2/code/authservice
+      - SERVER_BASE_URL=http://bff.localtest.me:8080
+    ports:
+      - "8080:8080"
+
+  service1:
+    image: service1:0.0.1-SNAPSHOT
+    container_name: service1
+    environment:
+      - AUTH_ISSUER_URI=http://authservice:9000
+      - SERVER_PORT=8081
+      - GRPC_SERVER_ADDRESS=service3:8083
+    extra_hosts:
+      - "localhost:host-gateway"
+    depends_on:
+      - service3
+
+  service2:
+    image: service2:0.0.1-SNAPSHOT
+    container_name: service2
+    environment:
+      - AUTH_ISSUER_URI=http://authservice:9000
+      - SERVER_PORT=8082
+    extra_hosts:
+      - "localhost:host-gateway"
+
+  service3:
+    image: service3:0.0.1-SNAPSHOT
+    container_name: service3
+    environment:
+      - SERVER_PORT=8083
